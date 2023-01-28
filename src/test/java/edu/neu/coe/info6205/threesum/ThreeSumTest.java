@@ -1,5 +1,6 @@
 package edu.neu.coe.info6205.threesum;
 
+import edu.neu.coe.info6205.util.Stopwatch;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -151,6 +152,35 @@ public class ThreeSumTest {
         Triple[] triplesQuadratic = target.getTriples();
         Triple[] triplesCubic = new ThreeSumCubic(ints).getTriples();
         assertEquals(triplesCubic.length, triplesQuadratic.length);
+    }
+
+    //@Test
+    @Ignore // Slow
+    public void testBenchmarkGetTriples() {
+        int[] inputLengths = new int[]{500, 1000, 2000, 4000, 8000, 16000};
+        for(int l: inputLengths) {
+            Supplier<int[]> intsSupplier = new Source(l, 15000).intsSupplier(10);
+            int[] ints = intsSupplier.get();
+            //System.out.println(Arrays.toString(ints));
+            try (Stopwatch timer = new Stopwatch()) {
+                System.out.println("***********************************************");
+
+                Triple[] triplesQuadrithmic = new ThreeSumQuadrithmic(ints).getTriples();
+                System.out.println("triplesQuadrithmic Time: "+ timer.lap() + " for dataset of length: "+ ints.length + " and solution triplets of length: " + triplesQuadrithmic.length);
+
+                //ThreeSum target = new ThreeSumQuadratic(ints);
+                Triple[] triplesQuadratic = new ThreeSumQuadratic(ints).getTriples();
+                System.out.println("ThreeSumQuadratic Time: "+ timer.lap() + " for dataset of length: "+ ints.length + " and solution triplets of length: " + triplesQuadratic.length);
+
+                Triple[] triplesQuadraticWithCalipers = new ThreeSumQuadraticWithCalipers(ints).getTriples();
+                System.out.println("triplesQuadraticWithCalipers Time: "+ timer.lap() + " for dataset of length: "+ ints.length + " and solution triplets of length: " + triplesQuadraticWithCalipers.length);
+
+                Triple[] triplesCubic = new ThreeSumCubic(ints).getTriples();
+                System.out.println("ThreeSumCubic Time: "+ timer.lap() + " for dataset of length: "+ ints.length + " and solution triplets of length: " + triplesCubic.length);
+                System.out.println("***********************************************");
+
+            }
+        }
     }
 
 }
